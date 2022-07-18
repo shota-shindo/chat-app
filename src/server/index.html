@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Document</title>
+	</head>
+	<body>
+		<ul id="msgTable"></ul>
+		<form id="msgForm" action="" method="post">
+			<input id="input" autocomplete="off" />
+			<button>送信</button>
+		</form>
+		<script src="/socket.io/socket.io.js"></script>
+		<script>
+			let socket = io();
+			const CHAT_MSG_KEY = "chat msg";
+			const msgForm = document.getElementById("msgForm");
+			const input = document.getElementById("input");
+
+			msgForm.addEventListener("submit", (e) => {
+				// no reload submit
+				e.preventDefault();
+				if (input.value) {
+					socket.emit(CHAT_MSG_KEY, input.value);
+					input.value = "";
+				}
+			});
+
+			const msgTable = document.getElementById("msgTable");
+			socket.on(CHAT_MSG_KEY, (msg) => {
+				let item = document.createElement("li");
+				item.textContent = JSON.stringify(msg);
+				msgTable.appendChild(item);
+			});
+		</script>
+	</body>
+</html>
